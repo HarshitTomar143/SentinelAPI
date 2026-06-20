@@ -7,7 +7,7 @@ export const ScanStatusSchema = z.object({
         status  : z.enum([
             "queued",
             "running",
-            "finished",
+            "completed",
             "failed",
         ]),
 
