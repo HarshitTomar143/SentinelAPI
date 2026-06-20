@@ -1,7 +1,10 @@
 import {z} from "zod";
 
 export const CreateScanSchema = z.object({
-    base_url : z.string().url().max(2048),
+    base_url : z.string()
+    .min(1, "Base URL is required")
+    .url("Please enter a valid url")
+    .max(2048, "URL is too long"),
 })
 
 export const CreateScanResponseSchema = z.object({

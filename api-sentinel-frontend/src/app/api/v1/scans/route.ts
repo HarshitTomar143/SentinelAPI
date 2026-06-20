@@ -10,7 +10,7 @@ export async function POST(){
         success: true,
 
         data : {
-            scan_id: crypto.randomUUID,
+            scan_id: crypto.randomUUID(),
             status: "queued",
             created_at : new Date().toISOString(),
         }
