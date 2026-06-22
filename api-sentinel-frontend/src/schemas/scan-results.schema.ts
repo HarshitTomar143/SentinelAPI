@@ -2,7 +2,7 @@ import {z} from "zod"
 
 const PerformanceSchema = 
     z.object({
-        average_latesncy_ms : z.number(),
+        average_latency_ms : z.number(),
         min_latency_ms: z.number(),
         max_latency_ms: z.number(),
         p95_latency_ms: z.number(), 
@@ -18,7 +18,7 @@ const AvailabilitySchema =
 const RateLimitingSchema = 
     z.object({
         detected: z.boolean(),
-        total_request : z.number(),
+        total_requests : z.number(),
         rate_limited_requests: z.number(),
     });
 
@@ -40,7 +40,7 @@ const ErrorHandlingSchema =
         proper_404 : z.boolean(),
     })    
 
-export const ScanResultSchema = 
+export const ScanResultsSchema = 
     z.object({
         success: z.boolean(),
         data: z.object({
@@ -54,4 +54,4 @@ export const ScanResultSchema =
         }),
     });
 
-export type ScanResultSchema = z.infer<typeof ScanResultSchema>;    
+export type ScanResultsSchema = z.infer<typeof ScanResultsSchema>;    
