@@ -1,12 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from datetime import datetime
 from uuid import UUID
 
 class CreateScanRequest(BaseModel):
-    base_url: str = Field(
-        min_length=1,
-        max_length=2048,
-    )
+    base_url: HttpUrl
 
 class CreateScanData(BaseModel):
     scan_id : UUID
