@@ -13,4 +13,15 @@ class FindingResponse(BaseModel):
 
 class FindingsListResponse(BaseModel):
     success : bool = True
-    data : list[FindingResponse]    
+    data : list[FindingResponse]   
+
+class FindingData(BaseModel):
+    success: bool = True
+    severity : str
+    title : str
+    description : str
+    recommendation : str
+
+class FindingsResponse(BaseModel):
+    success : bool = True
+    data : FindingData
