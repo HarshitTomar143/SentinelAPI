@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends
-
+from fastapi import HTTPException
 from uuid import UUID
 
 from app.schemas.scan import (
     CreateScanData,
     CreateScanRequest,
     CreateScanResponse,
-    ScanStatusResponse
+    ScanStatusResponse,
+    ScanStatusData
 )
 
 from app.services.scan_service import ScanService
@@ -35,11 +36,26 @@ def create_scan(
     )
 
 @router.get(
-    "/scans/{sacn_id}",
+    "/scans/{scan_id}",
     response_model= ScanStatusResponse
 )
 def get_scan(
     scan_id: UUID,
     scan_service : ScanService = Depends(get_scan_service)
 ):
-    pass
+    scan = scan_service.get_scan(scan_id)
+    if scan is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scan not found",
+        )
+    
+    return ScanStatusResponse(
+        data= ScanStatusData(
+            scan_id= scan.id,
+            status= scan.status,
+            progress = scan.progress,
+            current_stage= scan.current_stage,
+        )
+
+    )
