@@ -20,6 +20,10 @@ class ScanStatusData(BaseModel):
     progress : int
     current_stage : str | None        
 
+class ScanStatusResponse(BaseModel):
+    success: bool = True
+    data: ScanStatusData    
+
 class ScanResultsData(BaseModel):
     health_score: int
     success_rate: float
@@ -28,7 +32,7 @@ class ScanResultsData(BaseModel):
     max_latency : float
     p95_latency : float
 
-    http_enabled : bool
+    https_enabled : bool
     rate_limiting_detected : bool
 
 class ScanResultsResponse(BaseModel):

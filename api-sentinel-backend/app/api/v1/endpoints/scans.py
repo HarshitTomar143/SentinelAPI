@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends
 
+from uuid import UUID
+
 from app.schemas.scan import (
     CreateScanData,
     CreateScanRequest,
     CreateScanResponse,
+    ScanStatusResponse
 )
 
 from app.services.scan_service import ScanService
@@ -30,3 +33,13 @@ def create_scan(
             created_at= scan.created_at,
         )
     )
+
+@router.get(
+    "/scans/{sacn_id}",
+    response_model= ScanStatusResponse
+)
+def get_scan(
+    scan_id: UUID,
+    scan_service : ScanService = Depends(get_scan_service)
+):
+    pass

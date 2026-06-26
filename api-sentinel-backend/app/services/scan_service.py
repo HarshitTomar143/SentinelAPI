@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.scan import Scan
 from app.core.enums import ScanStatus
-
+from uuid import UUID
 class ScanService:
     def __init__(self, db: Session):
         self.db = db
@@ -19,7 +19,7 @@ class ScanService:
         self.db.refresh(scan)
         return scan
 
-    def get_scan(self, scan_id,)-> Scan | None:
+    def get_scan(self, scan_id:UUID,)-> Scan | None:
         return (
-            self.db.query(Scan).filter(Scan.id == scan_id).first
+            self.db.query(Scan).filter(Scan.id == scan_id).first()
         )
