@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from uuid import UUID
+from app.workers.tasks import hello
 
 from app.schemas.scan import (
     CreateScanData,
@@ -91,3 +92,10 @@ def get_scan_findings(
             )
          for finding in findings]
     )
+
+@router.post("/test")
+def test_celery():
+    hello.delay()
+    return {
+        "message" : "task successfully queued"
+    }

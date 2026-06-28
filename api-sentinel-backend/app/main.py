@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.api.v1.endpoints.health import router as health_router
 from app.api.v1.endpoints.scans import router as scans_router
-
+from app.core.celery import celery_app
 app =FastAPI(
     title="API Sentinel"
 )
