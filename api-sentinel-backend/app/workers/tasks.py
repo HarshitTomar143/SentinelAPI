@@ -4,5 +4,5 @@ import logging
 logger = logging.getLogger(__name__)
 
 @shared_task
-def hello():
-    logger.info("Hello From Celery!")
+def run_scan(scan_id : int):
+    print(f"Running scan {scan_id}")

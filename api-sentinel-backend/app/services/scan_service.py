@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.scan import Scan
 from app.core.enums import ScanStatus
 from app.models.finding import Finding
+from app.workers.tasks import run_scan
 from uuid import UUID
 class ScanService:
     def __init__(self, db: Session):
@@ -18,6 +19,7 @@ class ScanService:
         self.db.add(scan)
         self.db.commit()
         self.db.refresh(scan)
+        run_scan.delay(scan.id)
         return scan
 
     def get_scan(self, scan_id:UUID,)-> Scan | None:
@@ -34,3 +36,14 @@ class ScanService:
         ## This is more optimsed approach as we have implemented relationships in our orm models
 ## return (
 #           self.db.query(Finding).filter(Finding.scan_id == scan_id).all() )
+
+    def start_scan(self, scan_id: UUID):
+        scan = self.get_scan(scan_id)
+        if scan is None:
+            raise ValueError(f"Scan {scan_id} is not found")
+        scan.status = ScanStatus.RUNNING.value
+       
+        self.db.commit()
+        self.db.refresh(scan)
+
+        return scan
