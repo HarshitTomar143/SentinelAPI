@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.scan import Scan
 from app.core.enums import ScanStatus
 from app.models.finding import Finding
+from app.models.finding_result import FindingResult
 
 from uuid import UUID
 class ScanService:
@@ -50,3 +51,22 @@ class ScanService:
         self.db.refresh(scan)
 
         return scan
+    
+    def save_finding(
+            self,
+            scan_id: UUID,
+            finding_result: FindingResult
+    )-> Finding:
+       finding = Finding(
+        scan_id=scan_id,
+        severity=finding_result.severity,
+        title=finding_result.title,
+        description=finding_result.description,
+        recommendation=finding_result.recommendation,
+    )
+       
+       self.db.add(finding)
+       self.db.commit()
+       self.db.refresh(finding)
+
+       return finding
