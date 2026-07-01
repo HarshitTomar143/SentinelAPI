@@ -4,6 +4,7 @@ from app.services.scan_service import ScanService
 import httpx
 import logging
 from app.checks.availability import AvailabilityCheck
+from app.checks.response_time import ResponseTimeCheck
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ class ScannerService:
 
     def execute(self, scan_id : UUID) -> None:
         availability_check = AvailabilityCheck()
+        response_time_check = ResponseTimeCheck()
         scan = self.scan_service.get_scan(scan_id)
 
         if scan is None:
@@ -29,8 +31,15 @@ class ScannerService:
                 timeout=10.0,
             )
 
+            response_time_ms = response.elapsed.total_seconds() * 1000
+            
 
+            
             finding = availability_check.run(response)
+
+            response_time_finding = response_time_check.run(
+                response_time_ms
+            )
 
             logger.info(
                 "Scanned %s - Status Code: %s",
@@ -49,6 +58,11 @@ class ScannerService:
         self.scan_service.save_finding(
             scan.id,
             finding,
+        )
+
+        self.scan_service.save_finding(
+            scan.id,
+            response_time_finding,
         )
 
         logger.info("Scanner execution completed.")
