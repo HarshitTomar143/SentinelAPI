@@ -24,4 +24,4 @@ class FindingData(BaseModel):
 
 class FindingsResponse(BaseModel):
     success : bool = True
-    data : FindingData
+    data : list[FindingData]

@@ -51,5 +51,9 @@ class ScannerService:
             finding,
         )
 
+        logger.info("Scanner execution completed.")
+
+
+
         
     

@@ -3,6 +3,9 @@ from app.models.scan import Scan
 from app.core.enums import ScanStatus
 from app.models.finding import Finding
 from app.models.finding_result import FindingResult
+import logging
+
+logger = logging.getLogger(__name__)
 
 from uuid import UUID
 class ScanService:
@@ -70,3 +73,60 @@ class ScanService:
        self.db.refresh(finding)
 
        return finding
+    
+    def complete_scan(self, scan_id: UUID) -> Scan:
+        logger.info("Completing scan %s", scan_id)
+        scan = self.get_scan(scan_id)
+
+        if scan is None:
+            raise ValueError(
+                f"Scan with id '{scan_id}' does not exist"
+            )
+        
+        scan.status = ScanStatus.COMPLETED.value
+        scan.progress= 100
+        scan.current_stage= "COMPLETED"
+
+        self.db.commit()
+        logger.info("Scan %s marked as completed", scan_id)
+        self.db.refresh(scan)
+
+        return scan
+
+    def fail_scan(
+            self,
+            scan_id: UUID
+    )-> Scan:
+        scan = self.get_scan(scan_id)
+
+        if scan is None:
+            raise ValueError(
+                f"Scan with scan id '{scan_id}' does not exist!"
+            )
+        
+        scan.status = ScanStatus.FAILED.value
+
+        self.db.commit()
+        self.db.refresh(scan)
+        return scan
+    
+    def update_progress(
+            self,
+            scan_id: UUID,
+            progress: int,
+            current_stage: str,
+    )-> Scan:
+        scan= self.get_scan(scan_id)
+
+        if scan is None:
+            raise ValueError(
+                f"Scan with scan id '{scan_id} does not exist!'"
+            )
+        
+        scan.progress= progress
+        scan.current_stage= current_stage
+
+        self.db.commit()
+        self.db.refresh(scan)
+
+        return scan

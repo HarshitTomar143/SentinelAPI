@@ -17,12 +17,22 @@ def run_scan(scan_id : UUID)-> None:
         service.start_scan(scan_id)
         logger.info("Started scan %s", scan_id)
         scanner_service.execute(scan_id)
+        logger.info("Calling complete_scan()")
+        service.complete_scan(scan_id)
     except Exception:
         db.rollback()
         logger.exception(
         "Failed to start scan %s",
         scan_id,)
-        raise
+        
+        try:
+            service.fail_scan(scan_id)
+        except Exception:
+            logger.exception(
+                "Unable to mark scan %s as failed", scan_id
+            )
+
+        raise    
 
     finally:
         db.close()
