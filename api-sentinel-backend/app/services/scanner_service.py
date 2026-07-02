@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.checks.availability import AvailabilityCheck
 from app.checks.response_time import ResponseTimeCheck
+from app.checks.https_check import HttpsCheck
 from app.services.scan_service import ScanService
 
 logger = logging.getLogger(__name__)
@@ -88,4 +89,22 @@ class ScannerService:
         self.scan_service.save_finding(
             scan_id,
             finding,
+        )
+    
+    def run_https(
+            self, 
+            scan_id: UUID,
+            input_url : str,
+            response : httpx.Response,
+    ) -> None :
+        https_check = HttpsCheck()
+
+        finding = https_check.run(
+            input_url= input_url,
+            final_url= str(response.url),
+        )
+
+        self.scan_service.save_finding(
+            scan_id= scan_id,
+            finding_result= finding,
         )
