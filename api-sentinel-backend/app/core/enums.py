@@ -11,3 +11,12 @@ class FindingSeverity(str, Enum):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"   
+
+class ScanStage(str, Enum):
+    STARTING = "Starting Scan"
+    AVAILABILITY = "Availability Check"
+    RESPONSE_TIME = "Response Time Check"
+    HTTPS = "HTTPS Check"
+    SECURITY_HEADERS = "Security Headers Check"
+    RATE_LIMIT = "Rate Limiting Check"
+    COMPLETED = "Completed"
