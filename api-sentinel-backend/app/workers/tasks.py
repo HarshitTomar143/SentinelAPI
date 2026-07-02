@@ -27,7 +27,7 @@ def run_scan(scan_id : UUID)-> None:
 
         response= scanner_service.run_availability(
             scan_id
-        )
+    )
 
         service.update_progress(
         scan_id=scan_id,
@@ -37,13 +37,36 @@ def run_scan(scan_id : UUID)-> None:
         scanner_service.run_response_time(
             scan_id,
             response
-        )
+    )
 
         service.update_progress(
         scan_id=scan_id,
         progress=80,
         current_stage=ScanStage.RESPONSE_TIME.value,
     )
+        
+        scan = service.get_scan(scan_id)
+
+        if scan is None:
+            raise ValueError(
+                f"Scan with id '{scan_id}' was not found."
+    )
+
+
+        baseUrl = str(scan.base_url)
+
+        scanner_service.run_https(
+            scan_id= scan_id,
+            input_url=baseUrl,
+            response= response,
+    )
+
+        service.update_progress(
+        scan_id=scan_id,
+        progress=90,
+        current_stage=ScanStage.HTTPS.value,
+    )
+        
         
         logger.info("Calling complete_scan()")
         service.complete_scan(scan_id)
