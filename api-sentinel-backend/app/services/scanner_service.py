@@ -1,9 +1,7 @@
 from uuid import UUID
-import time
 import httpx
 import logging
 from sqlalchemy.orm import Session
-
 from app.checks.availability import AvailabilityCheck
 from app.checks.response_time import ResponseTimeCheck
 from app.checks.https_check import HttpsCheck
@@ -16,8 +14,10 @@ class ScannerService:
     def __init__(
         self,
         db: Session,
+        client: httpx.Client,
     ) -> None:
         self.db = db
+        self.client = client
         self.scan_service = ScanService(db)
 
     def run_availability(
@@ -37,9 +37,8 @@ class ScannerService:
 
      
 
-            response = httpx.get(
-                str(scan.base_url),
-                timeout=10.0,
+            response= self.client.get(
+                str(scan.base_url)
             )
 
 
