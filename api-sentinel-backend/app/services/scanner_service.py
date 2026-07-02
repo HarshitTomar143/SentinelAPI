@@ -35,24 +35,14 @@ class ScannerService:
 
         try:
 
-            start = time.perf_counter()
+     
 
             response = httpx.get(
                 str(scan.base_url),
                 timeout=10.0,
             )
 
-            end = time.perf_counter()
 
-            logger.info(
-                "perf_counter = %.2f ms",
-                (end - start) * 1000,
-            )
-
-            logger.info(
-            "response.elapsed = %.2f ms",
-            response.elapsed.total_seconds() * 1000,
-        )
 
 
             finding = availability_check.run(response)
