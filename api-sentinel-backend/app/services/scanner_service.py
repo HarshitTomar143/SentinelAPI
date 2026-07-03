@@ -7,6 +7,7 @@ from app.checks.response_time import ResponseTimeCheck
 from app.checks.https_check import HttpsCheck
 from app.services.scan_service import ScanService
 from app.checks.security_headers import SecurityHeadersCheck
+from app.checks.error_handling import ErrorHandlingCheck
 
 logger = logging.getLogger(__name__)
 
@@ -131,3 +132,42 @@ class ScannerService:
                 scan_id=scan_id,
                 finding_result= finding
             )
+    
+    def run_error_handling(
+            self,
+            scan_id: UUID
+    )-> None :
+        scan= self.scan_service.get_scan(scan_id)
+
+        if scan is None:
+            raise ValueError(
+                f"Scan with id '{scan_id}' was not found."
+            )
+        
+        invalid_url = (
+        str(scan.base_url).rstrip("/")
+        + "/api-sentinel-invalid-endpoint-404-test"
+    )
+        
+        try:
+            response = self.client.get(
+            invalid_url,
+        )
+        except httpx.HTTPError:
+            logger.exception(
+                "Failed to perform error handling check for %s",
+                invalid_url,
+            )
+            raise
+
+        error_handling_check = ErrorHandlingCheck()
+
+        findings = error_handling_check.run(
+            response,
+        )
+
+        for finding in findings:
+            self.scan_service.save_finding(
+                scan_id= scan_id,
+                finding_result= finding
+        )

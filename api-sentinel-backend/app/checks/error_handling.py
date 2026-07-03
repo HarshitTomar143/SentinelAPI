@@ -114,3 +114,6 @@ class ErrorHandlingCheck:
                     recommendation="No action required.",
                 )
             )       
+
+
+        return findings
