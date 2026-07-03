@@ -32,3 +32,28 @@ class ErrorHandlingCheck:
                 )
             )
 
+        content_type = response.headers.get(
+            "Content-Type", "",
+        ).lower()
+
+        if "application/json" in content_type:
+            findings.append(
+                FindingResult(
+                    title="Structured Error Response",
+                    description="The API returns structured JSON error responses.",
+                    severity=FindingSeverity.INFO.value,
+                    passed=True,
+                    recommendation="No action required.",
+                )
+            )
+
+        else:
+            findings.append(
+                FindingResult(
+                    title="Non-JSON Error Response",
+                    description="The API does not return JSON for error responses.",
+                    severity=FindingSeverity.MEDIUM.value,
+                    passed=False,
+                    recommendation="Return structured JSON error responses.",
+                )
+            )
