@@ -129,5 +129,5 @@ class ScannerService:
         for finding in findings:
             self.scan_service.save_finding(
                 scan_id=scan_id,
-                finding_result= findings
+                finding_result= finding
             )
