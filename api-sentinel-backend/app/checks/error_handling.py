@@ -57,3 +57,39 @@ class ErrorHandlingCheck:
                     recommendation="Return structured JSON error responses.",
                 )
             )
+
+        leakage_keywords = [
+             "traceback",
+            "exception",
+            "stack trace",
+            "sqlalchemy",
+            "fastapi",
+            "express",
+            "spring",
+            "node.js",
+            "postgres",
+            "sqlite",
+            ] 
+
+        body= response.text.lower()
+
+        if any(keyword in body for keyword in leakage_keywords):
+            findings.append(
+                FindingResult(
+                    title="Sensitive Information Exposed",
+                    description="The error response appears to expose internal implementation details.",
+                    severity=FindingSeverity.HIGH.value,
+                    passed=False,
+                    recommendation="Remove stack traces and framework details from production error responses.",
+                )
+            )
+        else:
+            findings.append(
+                FindingResult(
+                    title="No Information Leakage",
+                    description="No sensitive implementation details were detected.",
+                    severity=FindingSeverity.INFO.value,
+                    passed=True,
+                    recommendation="No action required.",
+                )
+            )   
