@@ -92,4 +92,25 @@ class ErrorHandlingCheck:
                     passed=True,
                     recommendation="No action required.",
                 )
-            )   
+            )
+
+        if 300 <= response.status_code < 400:
+            findings.append(
+                FindingResult(
+                    title="Unexpected Redirect",
+                    description="The invalid endpoint returned a redirect instead of an error.",
+                    severity=FindingSeverity.LOW.value,
+                    passed=False,
+                    recommendation="Return HTTP 404 for unknown API endpoints instead of redirecting.",
+                )
+            )
+        else:
+            findings.append(
+                FindingResult(
+                    title="No Unexpected Redirect",
+                    description="The invalid endpoint did not trigger a redirect.",
+                    severity=FindingSeverity.INFO.value,
+                    passed=True,
+                    recommendation="No action required.",
+                )
+            )       
