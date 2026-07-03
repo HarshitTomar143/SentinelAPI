@@ -19,5 +19,6 @@ class ScanStage(str, Enum):
     RESPONSE_TIME = "Response Time Check"
     HTTPS = "HTTPS Check"
     SECURITY_HEADERS = "Security Headers Check"
+    ERROR_HANDLING = "Error Handling Check"
     RATE_LIMIT = "Rate Limiting Check"
     COMPLETED = "Completed"
