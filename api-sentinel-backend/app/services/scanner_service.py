@@ -6,6 +6,7 @@ from app.checks.availability import AvailabilityCheck
 from app.checks.response_time import ResponseTimeCheck
 from app.checks.https_check import HttpsCheck
 from app.services.scan_service import ScanService
+from app.checks.security_headers import SecurityHeadersCheck
 
 logger = logging.getLogger(__name__)
 
@@ -113,3 +114,20 @@ class ScannerService:
             scan_id= scan_id,
             finding_result= finding,
         )
+
+    def run_security_headers(
+            self, 
+            scan_id : UUID,
+            response : httpx.Response,
+    )-> None:
+        security_headers_check = SecurityHeadersCheck()
+
+        findings = security_headers_check.run(
+            response.headers
+        )
+
+        for finding in findings:
+            self.scan_service.save_finding(
+                scan_id=scan_id,
+                finding_result= findings
+            )
