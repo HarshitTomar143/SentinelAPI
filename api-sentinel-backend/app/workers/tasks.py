@@ -41,7 +41,7 @@ def run_scan(scan_id : UUID)-> None:
 
             service.update_progress(
             scan_id=scan_id,
-            progress=50,
+            progress=40,
             current_stage=ScanStage.AVAILABILITY.value,
     )
             scanner_service.run_response_time(
@@ -51,7 +51,7 @@ def run_scan(scan_id : UUID)-> None:
 
             service.update_progress(
             scan_id=scan_id,
-            progress=80,
+            progress=60,
             current_stage=ScanStage.RESPONSE_TIME.value,
     )
         
@@ -73,10 +73,20 @@ def run_scan(scan_id : UUID)-> None:
 
             service.update_progress(
                 scan_id=scan_id,
-                progress=90,
+                progress=60,
                 current_stage=ScanStage.HTTPS.value,
     )
-        
+            
+            scanner_service.run_security_headers(
+                scan_id= scan_id,
+                response= response
+            )
+
+            service.update_progress(
+                scan_id=scan_id,
+                progress=80,
+                current_stage=ScanStage.SECURITY_HEADERS.value,
+            )    
         
             logger.info("Calling complete_scan()")
             service.complete_scan(scan_id)
