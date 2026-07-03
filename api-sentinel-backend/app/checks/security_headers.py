@@ -34,8 +34,24 @@ class SecurityHeadersCheck:
 
         for header, config in required_headers.items():
             if header in headers:
-                pass
+                finding.append(
+                    FindingResult(
+                        title=f"{header} Present",
+                        description=f"The response contains the '{header}' security header.",
+                        severity=FindingSeverity.INFO.value,
+                        passed=True,
+                        recommendation="No action required.",
+                    )
+                )
             else:
-                pass
+                finding.append(
+                    FindingResult(
+                        title=f"{header} Missing",
+                        description=f"The response does not contain the '{header}' security header.",
+                        severity=config["severity"],
+                        passed=False,
+                        recommendation=config["recommendation"],
+                    )
+                )
             
         return finding    
