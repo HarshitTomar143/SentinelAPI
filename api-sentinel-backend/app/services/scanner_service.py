@@ -9,6 +9,7 @@ from app.services.scan_service import ScanService
 from app.checks.security_headers import SecurityHeadersCheck
 from app.checks.error_handling import ErrorHandlingCheck
 from app.models.request_result import RequestResult
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -177,4 +178,16 @@ class ScannerService:
             self, 
             url : str,
     )-> RequestResult:
-        
+        start = time.perf_counter()
+
+        response = self.client.get(url)
+
+        end = time.perf_counter()
+
+        response_time_ms = (end - start) * 1000
+
+        return RequestResult(
+            status_code= response.status_code,
+            response_time_ms= response_time_ms,
+            timed_out= False,
+        )
