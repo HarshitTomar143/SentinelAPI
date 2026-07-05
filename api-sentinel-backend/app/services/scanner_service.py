@@ -10,8 +10,11 @@ from app.checks.security_headers import SecurityHeadersCheck
 from app.checks.error_handling import ErrorHandlingCheck
 from app.models.request_result import RequestResult
 import time
+from app.core.config import settings
+from concurrent.futures import ThreadPoolExecutor , as_completed
 
 logger = logging.getLogger(__name__)
+
 
 
 class ScannerService:
@@ -191,3 +194,27 @@ class ScannerService:
             response_time_ms= response_time_ms,
             timed_out= False,
         )
+    
+    def _run_concurrent_requests(
+            self, 
+            url : str,
+    )-> list[RequestResult]:
+        results : list[RequestResult] = []
+
+        with ThreadPoolExecutor(
+            max_workers= settings.rate_limit_max_workers,
+        )as executor:
+            futures = []
+
+            for _ in range(settings.rate_limit_request_count):
+                future = executor.submit(
+                    self._make_request,
+                    url,
+                )
+                futures.append(future)
+
+            for future in as_completed(futures):
+                result = future.result()   
+                results.append(result)
+
+        return results         
