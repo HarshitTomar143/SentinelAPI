@@ -8,6 +8,7 @@ from app.checks.https_check import HttpsCheck
 from app.services.scan_service import ScanService
 from app.checks.security_headers import SecurityHeadersCheck
 from app.checks.error_handling import ErrorHandlingCheck
+from app.models.request_result import RequestResult
 
 logger = logging.getLogger(__name__)
 
@@ -171,3 +172,9 @@ class ScannerService:
                 scan_id= scan_id,
                 finding_result= finding
         )
+
+    def _make_request(
+            self, 
+            url : str,
+    )-> RequestResult:
+        
