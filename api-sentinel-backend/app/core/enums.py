@@ -22,3 +22,12 @@ class ScanStage(str, Enum):
     ERROR_HANDLING = "Error Handling Check"
     RATE_LIMIT = "Rate Limiting Check"
     COMPLETED = "Completed"
+
+class HttpMethod(str, Enum):
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    PATCH = "PATCH"
+    DELETE = "DELETE"
+    HEAD = "HEAD"
+    OPTIONS = "OPTIONS"    
