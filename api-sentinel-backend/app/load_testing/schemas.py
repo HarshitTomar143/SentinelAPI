@@ -1,15 +1,19 @@
+from typing import Any
+
 from pydantic import BaseModel
 from pydantic import HttpUrl
-from http import HTTPMethod
+from app.core.enums import HttpMethod
 
 class LoadTestRequest(BaseModel):
     url: HttpUrl
 
-    method: HTTPMethod
+    method: HttpMethod
 
     headers: dict[str, str] = {}
 
-    body: dict | None = None
+    query_params: dict[str, str] = {}
+
+    body: Any | None = None
 
     total_requests: int = 2000
 
