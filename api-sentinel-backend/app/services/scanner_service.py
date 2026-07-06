@@ -11,6 +11,7 @@ from app.checks.error_handling import ErrorHandlingCheck
 from app.models.request_result import RequestResult
 import time
 from app.core.config import settings
+from app.models.performance_stats import PerformanceStats
 from concurrent.futures import ThreadPoolExecutor , as_completed
 
 logger = logging.getLogger(__name__)
@@ -177,45 +178,5 @@ class ScannerService:
                 finding_result= finding
         )
 
-    def _make_request(
-            self, 
-            url : str,
-    )-> RequestResult:
-        start = time.perf_counter()
-
-        response = self.client.get(url)
-
-        end = time.perf_counter()
-
-        response_time_ms = (end - start) * 1000
-
-        return RequestResult(
-            status_code= response.status_code,
-            response_time_ms= response_time_ms,
-            timed_out= False,
-        )
-    
-    def _run_concurrent_requests(
-            self, 
-            url : str,
-    )-> list[RequestResult]:
-        results : list[RequestResult] = []
-
-        with ThreadPoolExecutor(
-            max_workers= settings.rate_limit_max_workers,
-        )as executor:
-            futures = []
-
-            for _ in range(settings.rate_limit_request_count):
-                future = executor.submit(
-                    self._make_request,
-                    url,
-                    
-                )
-                futures.append(future)
-
-            for future in as_completed(futures):
-                result = future.result()   
-                results.append(result)
-
-        return results         
+     
+           
