@@ -1,7 +1,7 @@
 from asyncio import as_completed
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import httpx
-from app.load_testing.schemas import HttpRequest
+from app.load_testing.schemas import HttpRequest, LoadTestRequest, LoadTestResponse
 from app.models.request_result import RequestResult
 import time
 from app.models.performance_stats import PerformanceStats
@@ -121,16 +121,24 @@ class LoadTestService:
                 average_response_time_ms = average_response_time_ms,
                 minimum_response_time_ms = minimum_response_time_ms,
                 maximum_response_time_ms = maximum_response_time_ms,
-            )    
+            )
 
+    def run_load_test(
+                self,
+                load_test : LoadTestRequest,
+    ) -> LoadTestResponse:
+                results = self._run_concurrent_requests(load_test)
 
+                stats = self._calculate_performance_stats(results)
 
-            
-
-            
-
-
-
-
-
-                              
+                return LoadTestResponse(
+                total_requests=stats.total_requests,
+                successful_requests=stats.successful_requests,
+                rate_limited_requests=stats.rate_limited_requests,
+                server_error_requests=stats.server_error_requests,
+                timeout_requests=stats.timeout_requests,
+                other_error_requests=stats.other_error_requests,
+                average_response_time_ms=stats.average_response_time_ms,
+                minimum_response_time_ms=stats.minimum_response_time_ms,
+                maximum_response_time_ms=stats.maximum_response_time_ms,
+            )
