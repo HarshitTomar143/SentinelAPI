@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic import BaseModel
 from pydantic import HttpUrl
 from app.core.enums import HttpMethod
