@@ -71,24 +71,66 @@ class LoadTestService:
               self,
               results: list[RequestResult],
     )-> PerformanceStats:
-         total_requests = len(results)
+            total_requests = len(results)
 
-         successful_requests = 0
-         rate_limited_requests = 0
-         server_error_requests = 0
-         timeout_requests = 0
+            successful_requests = 0
+            rate_limited_requests = 0
+            server_error_requests = 0
+            timeout_requests = 0
 
-         for request in results:
-              if request.status_code is not None and 200<= request.status_code < 300:
-                   successful_requests += 1
-              elif request.status_code == 429:
-                   rate_limited_requests += 1
-              elif (
-                    request.status_code is not None
-                    and 500 <= request.status_code < 600
-                ):
-                    server_error_requests  += 1
-              elif  request.timed_out:
-                    timeout_requests += 1      
+            latencies : list[float] = []
+
+            for request in results:
+                if request.status_code is not None and 200<= request.status_code < 300:
+                    successful_requests += 1
+                elif request.status_code == 429:
+                    rate_limited_requests += 1
+                elif (
+                        request.status_code is not None
+                        and 500 <= request.status_code < 600
+                    ):
+                        server_error_requests  += 1
+                elif  request.timed_out:
+                        timeout_requests += 1
+
+                latencies.append(
+                  request.response_time_ms
+                )
+
+            if latencies:
+                average_response_time_ms = (
+                    sum(latencies) / len(latencies)
+                )
+
+                minimum_response_time_ms = min(latencies)
+
+                maximum_response_time_ms = max(latencies)
+
+            else:
+                average_response_time_ms = 0.0
+                minimum_response_time_ms = 0.0
+                maximum_response_time_ms = 0.0    
+
+            return PerformanceStats(
+                total_requests= total_requests,
+                successful_requests = successful_requests,
+                rate_limited_requests = rate_limited_requests,
+                server_error_requests = server_error_requests,
+                timeout_requests = timeout_requests,
+                other_error_requests = 0,
+                average_response_time_ms = average_response_time_ms,
+                minimum_response_time_ms = minimum_response_time_ms,
+                maximum_response_time_ms = maximum_response_time_ms,
+            )    
+
+
+
+            
+
+            
+
+
+
+
 
                               
