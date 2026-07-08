@@ -25,7 +25,7 @@ class LoadTestService:
                 method=request.method.value,
                 url= str(request.url),
                 headers= request.headers,
-                params=request.quesry_params,
+                params=request.query_params,
                 json=request.body,
            )
             
@@ -109,25 +109,35 @@ class LoadTestService:
             else:
                 average_response_time_ms = 0.0
                 minimum_response_time_ms = 0.0
-                maximum_response_time_ms = 0.0    
+                maximum_response_time_ms = 0.0
+
+            failed_requests = (
+                total_requests - successful_requests
+            )        
 
             return PerformanceStats(
                 total_requests= total_requests,
                 successful_requests = successful_requests,
                 rate_limited_requests = rate_limited_requests,
                 server_error_requests = server_error_requests,
+                failed_requests = failed_requests,
                 timeout_requests = timeout_requests,
                 other_error_requests = 0,
                 average_response_time_ms = average_response_time_ms,
-                minimum_response_time_ms = minimum_response_time_ms,
-                maximum_response_time_ms = maximum_response_time_ms,
+                min_response_time_ms = minimum_response_time_ms,
+                max_response_time_ms = maximum_response_time_ms,
             )
 
     def run_load_test(
                 self,
                 load_test : LoadTestRequest,
     ) -> LoadTestResponse:
-                results = self._run_concurrent_requests(load_test)
+                results = self._run_concurrent_requests(
+                          load_test.request,
+                            load_test.total_requests,
+                            load_test.concurrent_workers,
+
+                )
 
                 stats = self._calculate_performance_stats(results)
 
@@ -139,6 +149,6 @@ class LoadTestService:
                 timeout_requests=stats.timeout_requests,
                 other_error_requests=stats.other_error_requests,
                 average_response_time_ms=stats.average_response_time_ms,
-                minimum_response_time_ms=stats.minimum_response_time_ms,
-                maximum_response_time_ms=stats.maximum_response_time_ms,
+                minimum_response_time_ms=stats.min_response_time_ms,
+                maximum_response_time_ms=stats.max_response_time_ms,
             )
