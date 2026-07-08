@@ -4,6 +4,7 @@ import httpx
 from app.load_testing.schemas import HttpRequest
 from app.models.request_result import RequestResult
 import time
+from app.models.performance_stats import PerformanceStats
 
 class LoadTestService:
 
@@ -64,4 +65,10 @@ class LoadTestService:
                 for future in as_completed(futures):
                      result = future.result()
                      results.append(result)
-                     return results     
+                     return results   
+
+    def _calculate_performance_stats(
+              self,
+              results: list[RequestResult],
+    )-> PerformanceStats:
+                       
