@@ -5,4 +5,5 @@ class RequestResult:
     status_code: int | None
     response_time_ms: float
     timed_out: bool
-    error: str | None
+    error_type: str | None
+    error_message: str | None
