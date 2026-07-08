@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from pydantic import HttpUrl
 from app.core.enums import HttpMethod
 
-class LoadTestRequest(BaseModel):
+class HttpRequest(BaseModel):
     url: HttpUrl
 
     method: HttpMethod
@@ -13,7 +13,10 @@ class LoadTestRequest(BaseModel):
 
     query_params: dict[str, str] = {}
 
-    body: Any | None = None
+    body: dict | None = None
+
+class LoadTestRequest(BaseModel):
+    request: HttpRequest
 
     total_requests: int = 2000
 
