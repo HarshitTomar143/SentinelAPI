@@ -71,4 +71,24 @@ class LoadTestService:
               self,
               results: list[RequestResult],
     )-> PerformanceStats:
-                       
+         total_requests = len(results)
+
+         successful_requests = 0
+         rate_limited_requests = 0
+         server_error_requests = 0
+         timeout_requests = 0
+
+         for request in results:
+              if request.status_code is not None and 200<= request.status_code < 300:
+                   successful_requests += 1
+              elif request.status_code == 429:
+                   rate_limited_requests += 1
+              elif (
+                    request.status_code is not None
+                    and 500 <= request.status_code < 600
+                ):
+                    server_error_requests  += 1
+              elif  request.timed_out:
+                    timeout_requests += 1      
+
+                              
