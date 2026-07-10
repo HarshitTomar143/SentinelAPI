@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-#Dorming the dataclass
+
 @dataclass
 class RequestResult:
     status_code: int | None
